@@ -15,11 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Collapsible,
   CollapsibleContent,
@@ -48,20 +44,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   // Check if user is logged in and has admin access
   useEffect(() => {
     const userJson = localStorage.getItem("user");
-    
+
     if (!userJson) {
       router.push("/login?redirect=/admin");
       return;
     }
-    
+
     try {
       const userData = JSON.parse(userJson) as User;
-      
+
       if (userData.role !== "admin" && userData.role !== "superadmin") {
         router.push("/");
         return;
       }
-      
+
       setUser(userData);
     } catch (error) {
       console.error("Failed to parse user data", error);
@@ -82,7 +78,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       // Clear local storage
       localStorage.removeItem("user");
-      
+
       // Redirect to login page
       router.push("/login");
     } catch (error) {
@@ -157,7 +153,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <span className="text-xl font-bold">ShopNest Admin</span>
           </Link>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-1">
             {navItems.map((item, index) => (
@@ -168,9 +164,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     onOpenChange={() => toggleItem(item.title)}
                   >
                     <CollapsibleTrigger asChild>
-                      <button
-                        className="flex items-center justify-between w-full p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
+                      <button className="flex items-center justify-between w-full p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
                         <div className="flex items-center">
                           {item.icon}
                           <span className="ml-3">{item.title}</span>
@@ -218,7 +212,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             ))}
           </ul>
         </nav>
-        
+
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center mb-4">
             <div className="flex-1 min-w-0">
@@ -258,7 +252,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <span className="text-xl font-bold">ShopNest Admin</span>
             </Link>
           </div>
-          
+
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-1">
               {navItems.map((item, index) => (
@@ -269,16 +263,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       onOpenChange={() => toggleItem(item.title)}
                     >
                       <CollapsibleTrigger asChild>
-                        <button
-                          className="flex items-center justify-between w-full p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
+                        <button className="flex items-center justify-between w-full p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
                           <div className="flex items-center">
                             {item.icon}
                             <span className="ml-3">{item.title}</span>
                           </div>
                           <ChevronDown
                             className={`h-4 w-4 transition-transform ${
-                              openItems[item.title] ? "transform rotate-180" : ""
+                              openItems[item.title]
+                                ? "transform rotate-180"
+                                : ""
                             }`}
                           />
                         </button>
@@ -319,7 +313,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               ))}
             </ul>
           </nav>
-          
+
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center mb-4">
               <div className="flex-1 min-w-0">
