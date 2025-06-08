@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, CheckCircle, AlertTriangle, ShieldAlert } from "lucide-react";
 import Link from "next/link";
@@ -26,7 +33,9 @@ export default function AdminSetupPage() {
       setResult({
         success: data.success,
         message: data.success ? data.message : undefined,
-        error: data.success ? undefined : data.error || "Failed to create admin user",
+        error: data.success
+          ? undefined
+          : data.error || "Failed to create admin user",
       });
     } catch (error) {
       setResult({
@@ -47,7 +56,7 @@ export default function AdminSetupPage() {
             Admin Setup
           </CardTitle>
           <CardDescription>
-            Create an admin user for the ShopNest admin panel
+            Create an admin user for the Caress&Flawless admin panel
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -55,7 +64,7 @@ export default function AdminSetupPage() {
             <h3 className="font-medium mb-2">Admin Credentials</h3>
             <div className="grid grid-cols-[100px_1fr] gap-1 text-sm">
               <div className="font-medium">Email:</div>
-              <div>admin@shopnest.com</div>
+              <div>admin@caressflawless.com</div>
               <div className="font-medium">Password:</div>
               <div>admin123</div>
             </div>
@@ -64,16 +73,18 @@ export default function AdminSetupPage() {
           {result.success !== undefined && (
             <Alert
               variant={result.success ? "default" : "destructive"}
-              className={result.success ? "border-green-500 text-green-700 dark:text-green-400" : ""}
+              className={
+                result.success
+                  ? "border-green-500 text-green-700 dark:text-green-400"
+                  : ""
+              }
             >
               {result.success ? (
                 <CheckCircle className="h-4 w-4" />
               ) : (
                 <AlertTriangle className="h-4 w-4" />
               )}
-              <AlertTitle>
-                {result.success ? "Success" : "Error"}
-              </AlertTitle>
+              <AlertTitle>{result.success ? "Success" : "Error"}</AlertTitle>
               <AlertDescription>
                 {result.success ? result.message : result.error}
               </AlertDescription>
@@ -95,7 +106,7 @@ export default function AdminSetupPage() {
               "Create Admin User"
             )}
           </Button>
-          
+
           {result.success && (
             <Button variant="outline" className="w-full" asChild>
               <Link href="/login">Go to Login</Link>

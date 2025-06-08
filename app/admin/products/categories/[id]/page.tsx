@@ -66,29 +66,27 @@ export default function EditCategoryPage({ params }: EditCategoryPageProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push("/admin/products/categories")}
-              className="flex items-center gap-1"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Edit Category</h1>
-          <p className="text-muted-foreground">
-            Update details for {category.name}
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div className="flex items-center gap-3 mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Edit Category</h1>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push("/admin/products/categories")}
+          className="flex items-center gap-1"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
       </div>
-
       <div className="border rounded-lg p-6">
-        <CategoryForm initialData={category} isEditing={true} />
+        {isLoading ? (
+          <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <CategoryForm initialData={category} isEditing />
+        )}
       </div>
     </div>
   );

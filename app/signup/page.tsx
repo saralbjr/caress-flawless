@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = {
-  title: "Sign Up - ShopNest",
-  description: "Create a new ShopNest account",
+  title: "Sign Up - Caress&Flawless",
+  description: "Create a new Caress&Flawless account",
 };
 
 export default function SignupPage() {
@@ -16,7 +16,7 @@ export default function SignupPage() {
             Sign up to start shopping with ShopNest
           </p>
         </div>
-        
+
         <div className="bg-card shadow-sm border border-border/60 rounded-lg p-8">
           <AuthForm mode="signup" />
         </div>

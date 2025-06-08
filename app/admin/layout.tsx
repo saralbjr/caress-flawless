@@ -150,7 +150,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <Link href="/admin" className="flex items-center">
             <ShoppingBag className="h-6 w-6 text-primary mr-2" />
-            <span className="text-xl font-bold">ShopNest Admin</span>
+            <span className="text-xl font-bold">
+              Caress&Flawless Admin Panel
+            </span>
           </Link>
         </div>
 
@@ -249,7 +251,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <Link href="/admin" className="flex items-center">
               <ShoppingBag className="h-6 w-6 text-primary mr-2" />
-              <span className="text-xl font-bold">ShopNest Admin</span>
+              <span className="text-xl font-bold">Caress&Flawless Admin</span>
             </Link>
           </div>
 

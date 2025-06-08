@@ -44,25 +44,27 @@ export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
-  
+
   // Select the appropriate schema based on mode
   const schema = mode === "login" ? loginSchema : signupSchema;
-  
+
   // Initialize the form
   const form = useForm<LoginFormValues | SignupFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: mode === "login" 
-      ? { email: "", password: "" }
-      : { name: "", email: "", password: "" },
+    defaultValues:
+      mode === "login"
+        ? { email: "", password: "" }
+        : { name: "", email: "", password: "" },
   });
-  
+
   const onSubmit = async (data: LoginFormValues | SignupFormValues) => {
     setIsLoading(true);
-    
+
     try {
       // Determine the API endpoint based on the form mode
-      const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/signup";
-      
+      const endpoint =
+        mode === "login" ? "/api/auth/login" : "/api/auth/signup";
+
       // Send the request
       const response = await fetch(endpoint, {
         method: "POST",
@@ -72,43 +74,52 @@ export function AuthForm({ mode }: AuthFormProps) {
         body: JSON.stringify(data),
         credentials: "include", // Important for cookies
       });
-      
+
       const result = await response.json();
-      
+
       if (!response.ok) {
         // Show error notification
         toast.error(
-          result.error || 
-          `Failed to ${mode === "login" ? "log in" : "sign up"}. Please try again.`
+          result.error ||
+            `Failed to ${
+              mode === "login" ? "log in" : "sign up"
+            }. Please try again.`
         );
         return;
       }
-      
+
       // Store user data in localStorage
       if (result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
+        // If admin or superadmin, redirect to admin panel
+        if (
+          mode === "login" &&
+          (result.user.role === "admin" || result.user.role === "superadmin")
+        ) {
+          router.push("/admin");
+          router.refresh();
+          return;
+        }
       }
-      
+
       // Show success notification
       toast.success(
-        mode === "login" 
-          ? "Logged in successfully!" 
+        mode === "login"
+          ? "Logged in successfully!"
           : "Account created successfully!"
       );
-      
+
       // Redirect to the specified redirect URL or home page
       router.push(redirect);
       router.refresh();
     } catch (error) {
       console.error(`${mode} error:`, error);
-      toast.error(
-        `An error occurred. Please try again later.`
-      );
+      toast.error(`An error occurred. Please try again later.`);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -128,7 +139,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             )}
           />
         )}
-        
+
         {/* Email field */}
         <FormField
           control={form.control}
@@ -143,7 +154,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             </FormItem>
           )}
         />
-        
+
         {/* Password field */}
         <FormField
           control={form.control}
@@ -152,24 +163,28 @@ export function AuthForm({ mode }: AuthFormProps) {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        
+
         {/* Submit button */}
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {mode === "login" ? "Login" : "Sign Up"}
         </Button>
-        
+
         {/* Link to alternate auth form */}
         <div className="text-center text-sm">
           {mode === "login" ? (
             <p>
-              Don't have an account?{" "}
+              Don&apos&t have an account?{" "}
               <Link href="/signup" className="text-primary hover:underline">
                 Sign up
               </Link>

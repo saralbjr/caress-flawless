@@ -45,12 +45,12 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Product Not Found - ShopNest",
+      title: "Product Not Found - Caress&Flawless",
     };
   }
 
   return {
-    title: `${product.name} - ShopNest`,
+    title: `${product.name} - Caress&Flawless`,
     description: product.description.slice(0, 160),
   };
 }

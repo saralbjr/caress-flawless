@@ -37,25 +37,52 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   Search,
-  Plus,
   MoreHorizontal,
+  Eye,
   Edit,
   Trash2,
-  UserCog,
-  Ban,
+  Package,
+  Truck,
   CheckCircle,
+  XCircle,
+  Clock,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-interface User {
+interface Order {
   _id: string;
-  name: string;
-  email: string;
-  role: string;
-  isActive: boolean;
+  orderNumber: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  items: Array<{
+    product: {
+      _id: string;
+      name: string;
+      image: string;
+    };
+    name: string;
+    price: number;
+    quantity: number;
+  }>;
+  totalAmount: number;
+  status: string;
+  shippingAddress: {
+    fullName: string;
+    addressLine1: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+  paymentInfo: {
+    method: string;
+    status: string;
+    amount: number;
+  };
   createdAt: string;
-  lastLogin?: string;
 }
 
 interface PaginationInfo {
@@ -65,8 +92,8 @@ interface PaginationInfo {
   totalPages: number;
 }
 
-export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     total: 0,
     page: 1,
@@ -75,12 +102,11 @@ export default function UsersPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [roleFilter, setRoleFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const router = useRouter();
 
-  // Fetch users
-  const fetchUsers = async () => {
+  // Fetch orders
+  const fetchOrders = async () => {
     setIsLoading(true);
     try {
       // Build query parameters
@@ -92,26 +118,22 @@ export default function UsersPage() {
         params.append("search", searchQuery);
       }
 
-      if (roleFilter) {
-        params.append("role", roleFilter);
-      }
-
       if (statusFilter) {
-        params.append("isActive", statusFilter === "active" ? "true" : "false");
+        params.append("status", statusFilter);
       }
 
-      const response = await fetch(`/api/admin/users?${params.toString()}`);
+      const response = await fetch(`/api/admin/orders?${params.toString()}`);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch users");
+        throw new Error(data.error || "Failed to fetch orders");
       }
 
-      setUsers(data.users);
+      setOrders(data.orders);
       setPagination(data.pagination);
     } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Failed to load users");
+      console.error("Error fetching orders:", error);
+      toast.error("Failed to load orders");
     } finally {
       setIsLoading(false);
     }
@@ -119,19 +141,19 @@ export default function UsersPage() {
 
   // Initial fetch
   useEffect(() => {
-    fetchUsers();
+    fetchOrders();
   }, [pagination.page, pagination.limit]);
 
   // Handle search
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page
-    fetchUsers();
+    fetchOrders();
   };
 
   // Handle filter change
   const handleFilterChange = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page
-    fetchUsers();
+    fetchOrders();
   };
 
   // Handle page change
@@ -139,76 +161,70 @@ export default function UsersPage() {
     setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
-  // Handle user deletion
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) {
+  // Handle order deletion
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm("Are you sure you want to delete this order?")) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const response = await fetch(`/api/admin/orders/${orderId}`, {
         method: "DELETE",
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to delete user");
+        throw new Error(data.error || "Failed to delete order");
       }
 
-      toast.success("User deleted successfully");
-      fetchUsers(); // Refresh the list
+      toast.success("Order deleted successfully");
+      fetchOrders(); // Refresh the list
     } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error("Failed to delete user");
+      console.error("Error deleting order:", error);
+      toast.error("Failed to delete order");
     }
   };
 
-  // Handle user status toggle
-  const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
-    try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          isActive: !currentStatus,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to update user status");
-      }
-
-      toast.success(
-        `User ${!currentStatus ? "activated" : "deactivated"} successfully`
-      );
-      fetchUsers(); // Refresh the list
-    } catch (error) {
-      console.error("Error updating user status:", error);
-      toast.error("Failed to update user status");
-    }
-  };
-
-  // Render role badge
-  const renderRoleBadge = (role: string) => {
-    const roleStyles = {
-      superadmin: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-      admin:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-      user: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  // Render status badge
+  const renderStatusBadge = (status: string) => {
+    const statusConfig = {
+      pending: {
+        icon: <Clock className="h-3 w-3" />,
+        className:
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      },
+      processing: {
+        icon: <Package className="h-3 w-3" />,
+        className:
+          "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      },
+      shipped: {
+        icon: <Truck className="h-3 w-3" />,
+        className:
+          "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+      },
+      delivered: {
+        icon: <CheckCircle className="h-3 w-3" />,
+        className:
+          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      },
+      cancelled: {
+        icon: <XCircle className="h-3 w-3" />,
+        className: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+      },
     };
 
-    const style =
-      roleStyles[role as keyof typeof roleStyles] ||
-      "bg-gray-100 text-gray-800";
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
 
     return (
-      <Badge className={style} variant="outline">
-        {role}
+      <Badge
+        className={`${config.className} flex items-center gap-1`}
+        variant="outline"
+      >
+        {config.icon}
+        {status}
       </Badge>
     );
   };
@@ -216,15 +232,13 @@ export default function UsersPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-        <Button onClick={() => router.push("/admin/users/add")}>
-          Add User
-        </Button>
+        <h1 className="text-3xl font-bold tracking-tight">Order Management</h1>
       </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>All Users</CardTitle>
-          <CardDescription>Manage all users in your store.</CardDescription>
+          <CardTitle>All Orders</CardTitle>
+          <CardDescription>Manage all orders in your store.</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Filters */}
@@ -233,7 +247,7 @@ export default function UsersPage() {
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by name or email..."
+                  placeholder="Search by order number or customer..."
                   className="pl-8"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -242,23 +256,6 @@ export default function UsersPage() {
               </div>
             </div>
             <div className="flex gap-4">
-              <Select
-                value={roleFilter}
-                onValueChange={(value) => {
-                  setRoleFilter(value);
-                  handleFilterChange();
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="superadmin">Super Admin</SelectItem>
-                </SelectContent>
-              </Select>
               <Select
                 value={statusFilter}
                 onValueChange={(value) => {
@@ -271,8 +268,11 @@ export default function UsersPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" onClick={handleSearch}>
@@ -281,62 +281,57 @@ export default function UsersPage() {
             </div>
           </div>
 
-          {/* Users Table */}
+          {/* Orders Table */}
           <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
+                  <TableHead>Order Number</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Items</TableHead>
+                  <TableHead>Total</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-10">
+                    <TableCell colSpan={7} className="text-center py-10">
                       <div className="flex justify-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                       </div>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Loading users...
+                        Loading orders...
                       </p>
                     </TableCell>
                   </TableRow>
-                ) : users.length === 0 ? (
+                ) : orders.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-10">
-                      <p className="text-muted-foreground">No users found</p>
+                    <TableCell colSpan={7} className="text-center py-10">
+                      <p className="text-muted-foreground">No orders found</p>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  users.map((user) => (
-                    <TableRow key={user._id}>
-                      <TableCell className="font-medium">{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{renderRoleBadge(user.role)}</TableCell>
-                      <TableCell>
-                        {user.isActive ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-green-100 text-green-800"
-                          >
-                            Active
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-red-100 text-red-800"
-                          >
-                            Inactive
-                          </Badge>
-                        )}
+                  orders.map((order) => (
+                    <TableRow key={order._id}>
+                      <TableCell className="font-medium">
+                        {order.orderNumber}
                       </TableCell>
                       <TableCell>
-                        {format(new Date(user.createdAt), "MMM d, yyyy")}
+                        <div>
+                          <p className="font-medium">{order.user.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {order.user.email}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{order.items.length} item(s)</TableCell>
+                      <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell>{renderStatusBadge(order.status)}</TableCell>
+                      <TableCell>
+                        {format(new Date(order.createdAt), "MMM d, yyyy")}
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
@@ -350,42 +345,24 @@ export default function UsersPage() {
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
                               onClick={() =>
-                                router.push(`/admin/users/${user._id}`)
+                                router.push(`/admin/orders/${order._id}`)
+                              }
+                            >
+                              <Eye className="h-4 w-4 mr-2" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                router.push(`/admin/orders/${order._id}/edit`)
                               }
                             >
                               <Edit className="h-4 w-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                router.push(`/admin/users/${user._id}/roles`)
-                              }
-                            >
-                              <UserCog className="h-4 w-4 mr-2" />
-                              Manage Roles
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleToggleStatus(user._id, user.isActive)
-                              }
-                            >
-                              {user.isActive ? (
-                                <>
-                                  <Ban className="h-4 w-4 mr-2" />
-                                  Deactivate
-                                </>
-                              ) : (
-                                <>
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Activate
-                                </>
-                              )}
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-red-600"
-                              onClick={() => handleDeleteUser(user._id)}
+                              onClick={() => handleDeleteOrder(order._id)}
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               Delete
@@ -406,7 +383,7 @@ export default function UsersPage() {
               <div className="text-sm text-muted-foreground">
                 Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
                 {Math.min(pagination.page * pagination.limit, pagination.total)}{" "}
-                of {pagination.total} users
+                of {pagination.total} orders
               </div>
               <div className="flex gap-1">
                 <Button

@@ -112,7 +112,7 @@ export function Navbar() {
             className="text-2xl font-bold text-primary flex items-center"
           >
             <ShoppingBag className="h-6 w-6 mr-2" />
-            <span>ShopNest</span>
+            <span>Caress&Flawless</span>
           </Link>
 
           {/* Desktop Navigation */}

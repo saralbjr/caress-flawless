@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = {
-  title: "Login - ShopNest",
-  description: "Login to your ShopNest account",
+  title: "Login - Caress&Flawless",
+  description: "Login to your Caress&Flawless account",
 };
 
 export default function LoginPage() {
@@ -16,7 +16,7 @@ export default function LoginPage() {
             Enter your credentials to access your account
           </p>
         </div>
-        
+
         <div className="bg-card shadow-sm border border-border/60 rounded-lg p-8">
           <AuthForm mode="login" />
         </div>

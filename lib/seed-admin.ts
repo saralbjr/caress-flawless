@@ -13,7 +13,7 @@ export async function seedAdminUser(): Promise<{
     await dbConnect();
 
     // Check if admin user already exists
-    const existingAdmin = await User.findOne({ email: "admin@shopnest.com" });
+    const existingAdmin = await User.findOne({ email: "admin@gmail.com" });
 
     if (existingAdmin) {
       return {
@@ -25,7 +25,7 @@ export async function seedAdminUser(): Promise<{
     // Create admin user
     const adminUser = await User.create({
       name: "Admin User",
-      email: "admin@shopnest.com",
+      email: "admin@gmail.com",
       password: "admin123", // This will be hashed by the pre-save hook in the User model
       role: "superadmin",
       isActive: true,

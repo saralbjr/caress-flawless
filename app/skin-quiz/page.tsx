@@ -17,7 +17,7 @@ const QuizForm = dynamic(() => import("@/components/skin-quiz/QuizForm"), {
 });
 
 export const metadata: Metadata = {
-  title: "Skin Analysis Quiz - ShopNest",
+  title: "Skin Analysis Quiz - Caress&Flawless",
   description:
     "Take our skin analysis quiz to get personalized skincare product recommendations",
 };

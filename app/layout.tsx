@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ShopNest - E-commerce Store",
+  title: "Caress&Flawless - E-commerce Store",
   description: "A secure e-commerce web application with Next.js",
 };
 

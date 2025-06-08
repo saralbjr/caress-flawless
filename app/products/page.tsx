@@ -1,8 +1,8 @@
-import { ProductGrid } from '@/components/products/product-grid';
+import { ProductGrid } from "@/components/products/product-grid";
 
 export const metadata = {
-  title: 'Products - ShopNest',
-  description: 'Browse our collection of products',
+  title: "Products - Caress&Flawless",
+  description: "Browse our collection of products",
 };
 
 export default function ProductsPage() {
@@ -14,7 +14,7 @@ export default function ProductsPage() {
           Browse our collection of quality products across various categories.
         </p>
       </div>
-      
+
       <ProductGrid />
     </div>
   );
