@@ -50,7 +50,7 @@ export default function AddUserPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.name || !formData.email || !formData.password) {
       toast.error("Please fill in all required fields");
@@ -93,7 +93,9 @@ export default function AddUserPage() {
       router.push("/admin/users");
     } catch (error) {
       console.error("Error creating user:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to create user");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create user"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -102,11 +104,7 @@ export default function AddUserPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => router.back()}
-        >
+        <Button variant="outline" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -162,7 +160,9 @@ export default function AddUserPage() {
                   type="password"
                   placeholder="Enter password (min 6 characters)"
                   value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
                   required
                 />
               </div>
@@ -173,7 +173,9 @@ export default function AddUserPage() {
                   type="password"
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("confirmPassword", e.target.value)
+                  }
                   required
                 />
               </div>

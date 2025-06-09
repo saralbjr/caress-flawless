@@ -92,11 +92,11 @@ export default function UsersPage() {
         params.append("search", searchQuery);
       }
 
-      if (roleFilter) {
+      if (roleFilter && roleFilter !== "all") {
         params.append("role", roleFilter);
       }
 
-      if (statusFilter) {
+      if (statusFilter && statusFilter !== "all") {
         params.append("isActive", statusFilter === "active" ? "true" : "false");
       }
 
@@ -117,10 +117,10 @@ export default function UsersPage() {
     }
   };
 
-  // Initial fetch
+  // Initial fetch and refetch when filters change
   useEffect(() => {
     fetchUsers();
-  }, [pagination.page, pagination.limit]);
+  }, [pagination.page, pagination.limit, roleFilter, statusFilter]);
 
   // Handle search
   const handleSearch = () => {

@@ -27,7 +27,7 @@ export async function seedAdminUser(): Promise<{
       name: "Admin User",
       email: "admin@gmail.com",
       password: "admin123", // This will be hashed by the pre-save hook in the User model
-      role: "superadmin",
+      role: "admin",
       isActive: true,
       lastLogin: new Date(),
     });

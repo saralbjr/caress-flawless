@@ -148,13 +148,14 @@ export async function PUT(
     // Update user fields
     if (name) targetUser.name = name;
     if (email) targetUser.email = email;
-    
+
     // Track if role was changed
     const roleChanged = role && targetUser.role !== role;
     if (role) targetUser.role = role as UserRole;
-    
+
     // Track if status was changed
-    const statusChanged = isActive !== undefined && targetUser.isActive !== isActive;
+    const statusChanged =
+      isActive !== undefined && targetUser.isActive !== isActive;
     if (isActive !== undefined) targetUser.isActive = isActive;
 
     // Save changes
@@ -164,12 +165,14 @@ export async function PUT(
     let actionType: "update" | "role_change" | "status_change" = "update";
     if (roleChanged) actionType = "role_change";
     if (statusChanged) actionType = "status_change";
-    
+
     await logUserAction(
       user,
       actionType,
       params.id,
-      `Updated user: ${targetUser.name} (${targetUser.email}). Changes: ${JSON.stringify({
+      `Updated user: ${targetUser.name} (${
+        targetUser.email
+      }). Changes: ${JSON.stringify({
         name: name ? "Updated" : "Unchanged",
         email: email ? "Updated" : "Unchanged",
         role: roleChanged ? `${targetUser.role}` : "Unchanged",

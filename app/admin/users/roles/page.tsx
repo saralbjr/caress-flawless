@@ -64,7 +64,7 @@ export default function UserRolesPage() {
       }
 
       setUsers(data.users);
-      
+
       // Calculate role statistics
       const stats = data.users.reduce(
         (acc: RoleStats, user: User) => {
@@ -120,18 +120,24 @@ export default function UserRolesPage() {
       },
       admin: {
         icon: <Shield className="h-3 w-3" />,
-        className: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+        className:
+          "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
       },
       user: {
         icon: <Users className="h-3 w-3" />,
-        className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+        className:
+          "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
       },
     };
 
-    const config = roleConfig[role as keyof typeof roleConfig] || roleConfig.user;
+    const config =
+      roleConfig[role as keyof typeof roleConfig] || roleConfig.user;
 
     return (
-      <Badge className={`${config.className} flex items-center gap-1`} variant="outline">
+      <Badge
+        className={`${config.className} flex items-center gap-1`}
+        variant="outline"
+      >
         {config.icon}
         {role}
       </Badge>
@@ -142,7 +148,9 @@ export default function UserRolesPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Roles Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            User Roles Management
+          </h1>
           <p className="text-muted-foreground">
             Manage user roles and permissions across the system.
           </p>
@@ -165,7 +173,9 @@ export default function UserRolesPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Administrators</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Administrators
+            </CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -182,9 +192,7 @@ export default function UserRolesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{roleStats.superadmin}</div>
-            <p className="text-xs text-muted-foreground">
-              Full system access
-            </p>
+            <p className="text-xs text-muted-foreground">Full system access</p>
           </CardContent>
         </Card>
       </div>
@@ -238,11 +246,17 @@ export default function UserRolesPage() {
                       <TableCell>{renderRoleBadge(user.role)}</TableCell>
                       <TableCell>
                         {user.isActive ? (
-                          <Badge variant="outline" className="bg-green-100 text-green-800">
+                          <Badge
+                            variant="outline"
+                            className="bg-green-100 text-green-800"
+                          >
                             Active
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-red-100 text-red-800">
+                          <Badge
+                            variant="outline"
+                            className="bg-red-100 text-red-800"
+                          >
                             Inactive
                           </Badge>
                         )}
@@ -250,7 +264,9 @@ export default function UserRolesPage() {
                       <TableCell>
                         <Select
                           value={user.role}
-                          onValueChange={(value) => handleRoleChange(user._id, value)}
+                          onValueChange={(value) =>
+                            handleRoleChange(user._id, value)
+                          }
                         >
                           <SelectTrigger className="w-[140px]">
                             <SelectValue />
@@ -258,7 +274,9 @@ export default function UserRolesPage() {
                           <SelectContent>
                             <SelectItem value="user">User</SelectItem>
                             <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="superadmin">Super Admin</SelectItem>
+                            <SelectItem value="superadmin">
+                              Super Admin
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
