@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
@@ -91,9 +91,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div>
             <Badge className="mb-4 capitalize">{product.category}</Badge>
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-            <p className="text-2xl font-semibold text-primary">
-              ${product.price.toFixed(2)}
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-3xl font-bold">
+                Rs.{product.price.toFixed(2)}
+              </p>
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-400" />
+              </div>
+            </div>
           </div>
 
           <div className="prose prose-sm dark:prose-invert">
@@ -113,7 +118,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div>
                 <h4 className="text-sm font-medium mb-1">Shipping</h4>
                 <p className="text-sm text-muted-foreground">
-                  Free shipping on orders over $50
+                  Free shipping on orders over Rs.50
                 </p>
               </div>
               <div>

@@ -130,7 +130,8 @@ export default function CategoryForm({
       // Clean up empty strings
       const payload = {
         ...data,
-        parent: data.parent || undefined,
+        parent:
+          !data.parent || data.parent === "none" ? undefined : data.parent,
         image: data.image || undefined,
         description: data.description || undefined,
       };
@@ -228,17 +229,21 @@ export default function CategoryForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">None (Root Category)</SelectItem>
                       {isLoadingParents ? (
-                        <SelectItem value="" disabled>
-                          Loading...
+                        <SelectItem value="loading" disabled>
+                          Loading categories...
                         </SelectItem>
                       ) : (
-                        parentCategories.map((category) => (
-                          <SelectItem key={category._id} value={category._id}>
-                            {category.name}
+                        <>
+                          <SelectItem value="none">
+                            None (Root Category)
                           </SelectItem>
-                        ))
+                          {parentCategories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </>
                       )}
                     </SelectContent>
                   </Select>

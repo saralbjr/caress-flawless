@@ -116,7 +116,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       subitems: [
         { title: "All Products", href: "/admin/products" },
         { title: "Add Product", href: "/admin/products/add" },
-        { title: "Categories", href: "/admin/products/categories" },
+        { title: "All Categories", href: "/admin/products/categories" },
+        { title: "Add Category", href: "/admin/products/categories/add" },
         { title: "Inventory", href: "/admin/products/inventory" },
       ],
     },

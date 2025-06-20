@@ -60,7 +60,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Product {
   _id: string;
@@ -96,11 +102,15 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+    []
+  );
   const router = useRouter();
 
-  // Fetch products on initial load and when filters change
+  // Fetch products and categories on initial load
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, [pagination.page, pagination.limit, sortBy, sortOrder]);
 
   const fetchProducts = async () => {
@@ -131,6 +141,21 @@ export default function ProductsPage() {
       toast.error("Failed to load products");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/admin/categories?limit=200");
+      const data = await response.json();
+      if (response.ok) {
+        setCategories(data.categories);
+      } else {
+        throw new Error(data.error || "Failed to fetch categories");
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      toast.error("Failed to load categories for filtering.");
     }
   };
 
@@ -183,20 +208,12 @@ export default function ProductsPage() {
     }
   };
 
-  const categories = [
-    { id: "all", name: "All Categories" },
-    { id: "electronics", name: "Electronics" },
-    { id: "clothing", name: "Clothing" },
-    { id: "books", name: "Books" },
-    { id: "home", name: "Home & Kitchen" },
-    { id: "beauty", name: "Beauty" },
-    { id: "other", name: "Other" },
-  ];
-
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Product Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Product Management
+        </h1>
         <Button onClick={() => router.push("/admin/products/add")}>
           Add Product
         </Button>
@@ -242,16 +259,15 @@ export default function ProductsPage() {
                       <label className="text-sm font-medium">Category</label>
                       <Select
                         value={category}
-                        onValueChange={(value) => {
-                          setCategory(value);
-                        }}
+                        onValueChange={(value) => setCategory(value)}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="all">All Categories</SelectItem>
                           {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.id}>
+                            <SelectItem key={cat._id} value={cat._id}>
                               {cat.name}
                             </SelectItem>
                           ))}
@@ -264,7 +280,11 @@ export default function ProductsPage() {
                         value={isActive === null ? "all" : isActive}
                         onValueChange={(value) => {
                           setIsActive(
-                            value === "all" ? null : value === "true" ? "true" : "false"
+                            value === "all"
+                              ? null
+                              : value === "true"
+                              ? "true"
+                              : "false"
                           );
                         }}
                       >
@@ -422,9 +442,13 @@ export default function ProductsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{product.category}</Badge>
+                        <Badge variant="outline">
+                          {categories.find(
+                            (cat) => cat._id === product.category
+                          )?.name || product.category}
+                        </Badge>
                       </TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
+                      <TableCell>Rs.{product.price.toFixed(2)}</TableCell>
                       <TableCell>
                         {product.stock > 0 ? (
                           product.stock
@@ -535,7 +559,8 @@ export default function ProductsPage() {
                     pagination.total
                   )}
                 </span>{" "}
-                of <span className="font-medium">{pagination.total}</span> products
+                of <span className="font-medium">{pagination.total}</span>{" "}
+                products
               </div>
               <div className="flex space-x-2">
                 <Button

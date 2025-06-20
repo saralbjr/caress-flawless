@@ -49,6 +49,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface Order {
   _id: string;
@@ -316,8 +317,13 @@ export default function OrdersPage() {
                 ) : (
                   orders.map((order) => (
                     <TableRow key={order._id}>
-                      <TableCell className="font-medium">
-                        {order.orderNumber}
+                      <TableCell>
+                        <Link
+                          href={`/admin/orders/${order._id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {order.orderNumber}
+                        </Link>
                       </TableCell>
                       <TableCell>
                         <div>
@@ -328,7 +334,7 @@ export default function OrdersPage() {
                         </div>
                       </TableCell>
                       <TableCell>{order.items.length} item(s)</TableCell>
-                      <TableCell>${order.totalAmount.toFixed(2)}</TableCell>
+                      <TableCell>Rs.{order.totalAmount.toFixed(2)}</TableCell>
                       <TableCell>{renderStatusBadge(order.status)}</TableCell>
                       <TableCell>
                         {format(new Date(order.createdAt), "MMM d, yyyy")}

@@ -78,7 +78,7 @@ export default function InventoryPage() {
     try {
       const params = new URLSearchParams();
       params.append("limit", "100");
-      
+
       if (searchQuery) {
         params.append("search", searchQuery);
       }
@@ -141,16 +141,19 @@ export default function InventoryPage() {
 
     setIsUpdating(true);
     try {
-      const response = await fetch(`/api/admin/products/${selectedProduct._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          stock: stockForm.stock,
-          lowStockThreshold: stockForm.lowStockThreshold,
-        }),
-      });
+      const response = await fetch(
+        `/api/admin/products/${selectedProduct._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            stock: stockForm.stock,
+            lowStockThreshold: stockForm.lowStockThreshold,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -173,21 +176,30 @@ export default function InventoryPage() {
   const renderStockBadge = (product: Product) => {
     if (product.isOutOfStock) {
       return (
-        <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300" variant="outline">
+        <Badge
+          className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+          variant="outline"
+        >
           <AlertTriangle className="h-3 w-3 mr-1" />
           Out of Stock
         </Badge>
       );
     } else if (product.isLowStock) {
       return (
-        <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300" variant="outline">
+        <Badge
+          className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+          variant="outline"
+        >
           <TrendingDown className="h-3 w-3 mr-1" />
           Low Stock
         </Badge>
       );
     } else {
       return (
-        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" variant="outline">
+        <Badge
+          className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+          variant="outline"
+        >
           <TrendingUp className="h-3 w-3 mr-1" />
           In Stock
         </Badge>
@@ -198,16 +210,18 @@ export default function InventoryPage() {
   // Calculate inventory stats
   const inventoryStats = {
     total: products.length,
-    lowStock: products.filter(p => p.isLowStock && !p.isOutOfStock).length,
-    outOfStock: products.filter(p => p.isOutOfStock).length,
-    inStock: products.filter(p => !p.isLowStock && !p.isOutOfStock).length,
+    lowStock: products.filter((p) => p.isLowStock && !p.isOutOfStock).length,
+    outOfStock: products.filter((p) => p.isOutOfStock).length,
+    inStock: products.filter((p) => !p.isLowStock && !p.isOutOfStock).length,
   };
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Inventory Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Inventory Management
+          </h1>
           <p className="text-muted-foreground">
             Monitor and manage product stock levels.
           </p>
@@ -218,7 +232,9 @@ export default function InventoryPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Products
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -231,7 +247,9 @@ export default function InventoryPage() {
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{inventoryStats.inStock}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {inventoryStats.inStock}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -240,7 +258,9 @@ export default function InventoryPage() {
             <TrendingDown className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{inventoryStats.lowStock}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {inventoryStats.lowStock}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -249,11 +269,13 @@ export default function InventoryPage() {
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{inventoryStats.outOfStock}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {inventoryStats.outOfStock}
+            </div>
           </CardContent>
         </Card>
       </div>
-      
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -337,20 +359,29 @@ export default function InventoryPage() {
                 ) : (
                   filteredProducts.map((product) => (
                     <TableRow key={product._id}>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell className="font-mono text-sm">{product.sku}</TableCell>
+                      <TableCell className="font-medium">
+                        {product.name}
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        {product.sku}
+                      </TableCell>
                       <TableCell>{product.category}</TableCell>
                       <TableCell>
-                        <span className={`font-medium ${
-                          product.isOutOfStock ? "text-red-600" : 
-                          product.isLowStock ? "text-yellow-600" : "text-green-600"
-                        }`}>
+                        <span
+                          className={`font-medium ${
+                            product.isOutOfStock
+                              ? "text-red-600"
+                              : product.isLowStock
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        >
                           {product.stock}
                         </span>
                       </TableCell>
                       <TableCell>{product.lowStockThreshold}</TableCell>
                       <TableCell>{renderStockBadge(product)}</TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
+                      <TableCell>Rs.{product.price.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="outline"
@@ -376,7 +407,8 @@ export default function InventoryPage() {
           <DialogHeader>
             <DialogTitle>Update Stock</DialogTitle>
             <DialogDescription>
-              {selectedProduct && `Update inventory for ${selectedProduct.name}`}
+              {selectedProduct &&
+                `Update inventory for ${selectedProduct.name}`}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -389,7 +421,12 @@ export default function InventoryPage() {
                 type="number"
                 min="0"
                 value={stockForm.stock}
-                onChange={(e) => setStockForm(prev => ({ ...prev, stock: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setStockForm((prev) => ({
+                    ...prev,
+                    stock: parseInt(e.target.value) || 0,
+                  }))
+                }
                 className="col-span-3"
               />
             </div>
@@ -402,7 +439,12 @@ export default function InventoryPage() {
                 type="number"
                 min="0"
                 value={stockForm.lowStockThreshold}
-                onChange={(e) => setStockForm(prev => ({ ...prev, lowStockThreshold: parseInt(e.target.value) || 0 }))}
+                onChange={(e) =>
+                  setStockForm((prev) => ({
+                    ...prev,
+                    lowStockThreshold: parseInt(e.target.value) || 0,
+                  }))
+                }
                 className="col-span-3"
               />
             </div>

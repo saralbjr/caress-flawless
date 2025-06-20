@@ -42,7 +42,12 @@ const productSchema = z.object({
   price: z
     .number()
     .min(0.01, "Price must be greater than 0")
-    .or(z.string().regex(/^\d*\.?\d+$/).transform(Number)),
+    .or(
+      z
+        .string()
+        .regex(/^\d*\.?\d+$/)
+        .transform(Number)
+    ),
   image: z.string().url("Please enter a valid URL for the image"),
   gallery: z.array(z.string().url("Please enter a valid URL")).optional(),
   category: z.string().min(1, "Please select a category"),
@@ -74,6 +79,10 @@ export default function ProductForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [tagInput, setTagInput] = useState("");
   const [galleryInput, setGalleryInput] = useState("");
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>(
+    []
+  );
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const router = useRouter();
 
   // Initialize form with default values or existing product data
@@ -101,15 +110,27 @@ export default function ProductForm({
         },
   });
 
-  // Categories list
-  const categories = [
-    { id: "electronics", name: "Electronics" },
-    { id: "clothing", name: "Clothing" },
-    { id: "books", name: "Books" },
-    { id: "home", name: "Home & Kitchen" },
-    { id: "beauty", name: "Beauty" },
-    { id: "other", name: "Other" },
-  ];
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const response = await fetch("/api/admin/categories?limit=500"); // Fetch all
+        const data = await response.json();
+        if (response.ok) {
+          setCategories(data.categories);
+        } else {
+          throw new Error(data.error || "Failed to fetch categories");
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load categories.");
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Handle form submission
   const onSubmit = async (data: ProductFormValues) => {
@@ -151,7 +172,7 @@ export default function ProductForm({
   // Handle adding a new tag
   const handleAddTag = () => {
     if (!tagInput.trim()) return;
-    
+
     const currentTags = form.getValues("tags") || [];
     if (!currentTags.includes(tagInput.trim())) {
       form.setValue("tags", [...currentTags, tagInput.trim()]);
@@ -171,11 +192,11 @@ export default function ProductForm({
   // Handle adding a gallery image
   const handleAddGalleryImage = () => {
     if (!galleryInput.trim()) return;
-    
+
     try {
       // Validate URL
       new URL(galleryInput);
-      
+
       const currentGallery = form.getValues("gallery") || [];
       if (!currentGallery.includes(galleryInput.trim())) {
         form.setValue("gallery", [...currentGallery, galleryInput.trim()]);
@@ -256,11 +277,17 @@ export default function ProductForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
+                      {isLoadingCategories ? (
+                        <SelectItem value="loading" disabled>
+                          Loading categories...
                         </SelectItem>
-                      ))}
+                      ) : (
+                        categories.map((category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -332,7 +359,7 @@ export default function ProductForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price ($)</FormLabel>
+                  <FormLabel>Price (Rs.)</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -342,7 +369,9 @@ export default function ProductForm({
                       {...field}
                       onChange={(e) => {
                         field.onChange(
-                          e.target.value === "" ? "" : parseFloat(e.target.value)
+                          e.target.value === ""
+                            ? ""
+                            : parseFloat(e.target.value)
                         );
                       }}
                     />
@@ -459,7 +488,10 @@ export default function ProductForm({
               <FormItem>
                 <FormLabel>Main Image URL</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://example.com/image.jpg" {...field} />
+                  <Input
+                    placeholder="https://example.com/image.jpg"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
                   Enter the URL of the main product image

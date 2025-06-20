@@ -22,7 +22,12 @@ const mockOrders = [
     status: "delivered",
     total: 249.99,
     items: [
-      { id: "1", name: "Wireless Bluetooth Headphones", price: 199.99, quantity: 1 },
+      {
+        id: "1",
+        name: "Wireless Bluetooth Headphones",
+        price: 199.99,
+        quantity: 1,
+      },
       { id: "6", name: "Premium Yoga Mat", price: 49.99, quantity: 1 },
     ],
   },
@@ -40,18 +45,18 @@ const mockOrders = [
 export default function OrdersPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const router = useRouter();
-  
+
   // Check if user is logged in
   useEffect(() => {
     const userJson = localStorage.getItem("user");
-    
+
     if (!userJson) {
       router.push("/login");
       return;
     }
-    
+
     try {
       const userData = JSON.parse(userJson);
       setUser(userData);
@@ -63,7 +68,7 @@ export default function OrdersPage() {
       setIsLoading(false);
     }
   }, [router]);
-  
+
   // Function to render status badge with appropriate color
   const renderStatusBadge = (status: string) => {
     switch (status) {
@@ -77,7 +82,7 @@ export default function OrdersPage() {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-  
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-24 flex items-center justify-center min-h-[70vh]">
@@ -88,7 +93,7 @@ export default function OrdersPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-24">
       <div className="max-w-4xl mx-auto">
@@ -96,7 +101,7 @@ export default function OrdersPage() {
         <p className="text-muted-foreground mb-8">
           View and track your order history
         </p>
-        
+
         {mockOrders.length === 0 ? (
           <div className="text-center py-12 border border-dashed rounded-lg">
             <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
@@ -111,10 +116,7 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-6">
             {mockOrders.map((order) => (
-              <div 
-                key={order.id} 
-                className="border rounded-lg overflow-hidden"
-              >
+              <div key={order.id} className="border rounded-lg overflow-hidden">
                 <div className="bg-muted p-4 flex flex-col sm:flex-row justify-between sm:items-center">
                   <div className="mb-2 sm:mb-0">
                     <div className="flex items-center gap-2">
@@ -127,25 +129,27 @@ export default function OrdersPage() {
                   </div>
                   <div className="text-sm">
                     <span className="text-muted-foreground">Total:</span>
-                    <span className="font-semibold ml-2">${order.total.toFixed(2)}</span>
+                    <span className="font-semibold ml-2">
+                      Rs.{order.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
                 <div className="p-4">
                   <h4 className="font-medium mb-2">Items</h4>
                   <div className="space-y-3">
                     {order.items.map((item) => (
-                      <div 
-                        key={item.id} 
+                      <div
+                        key={item.id}
                         className="flex justify-between items-center py-2 border-b last:border-b-0"
                       >
                         <div>
                           <p>{item.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × ${item.price.toFixed(2)}
+                            Qty: {item.quantity} × Rs.{item.price.toFixed(2)}
                           </p>
                         </div>
                         <div className="font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          Rs.{(item.price * item.quantity).toFixed(2)}
                         </div>
                       </div>
                     ))}

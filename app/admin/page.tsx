@@ -12,7 +12,6 @@ import {
   Users,
   ShoppingBag,
   CreditCard,
-  DollarSign,
   Package,
   AlertTriangle,
 } from "lucide-react";
@@ -145,11 +144,11 @@ export default function AdminDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${stats.totalRevenue.toFixed(2)}
+              Rs.{stats.totalRevenue.toFixed(2)}
             </div>
             {stats.revenueGrowth !== 0 && (
               <p
@@ -195,7 +194,7 @@ export default function AdminDashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">${order.total.toFixed(2)}</p>
+                      <p className="font-medium">Rs.{order.total.toFixed(2)}</p>
                       <span
                         className={`px-2 py-1 rounded text-xs font-semibold ${
                           order.status === "delivered"

@@ -121,7 +121,7 @@ export function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+                className={`text-base font-medium transition-colors hover:text-primary ${
                   pathname === link.href
                     ? "text-primary"
                     : "text-muted-foreground"
