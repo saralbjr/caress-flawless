@@ -157,7 +157,8 @@ export async function PUT(
     if (tags !== undefined) product.tags = tags;
     if (sku !== undefined) product.sku = sku;
     if (stock !== undefined) product.stock = stock;
-    if (lowStockThreshold !== undefined) product.lowStockThreshold = lowStockThreshold;
+    if (lowStockThreshold !== undefined)
+      product.lowStockThreshold = lowStockThreshold;
     if (variants !== undefined) product.variants = variants;
     if (attributes !== undefined) product.attributes = attributes;
     if (isActive !== undefined) product.isActive = isActive;
